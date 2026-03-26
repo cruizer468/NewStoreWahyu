@@ -7,7 +7,7 @@ export async function getOrder(orderId: string) {
   const { data, error } = await supabase
     .from("orders")
     .select("*")
-    .eq("id", orderId)
+    .eq("order_id", orderId)
     .maybeSingle();
 
   if (error) {
@@ -24,13 +24,13 @@ export async function getOrderById(orderId: string) {
   const { data, error } = await supabase
     .from("orders")
     .select(`
-      id,
+      order_id,
       invoice_code,
       buyer_name,
       buyer_email,
       buyer_whatsapp,
       quantity,
-      total_amount,
+      gross_amount,
       payment_status,
       delivery_status,
       product_id,
@@ -38,7 +38,7 @@ export async function getOrderById(orderId: string) {
         name
       )
     `)
-    .eq("id", orderId)
+    .eq("order_id", orderId)
     .maybeSingle();
 
   if (error) {
@@ -49,7 +49,10 @@ export async function getOrderById(orderId: string) {
   return data;
 }
 
-export async function updateOrderStatus(orderId: string, paymentStatus: string) {
+export async function updateOrderStatus(
+  orderId: string,
+  paymentStatus: string
+) {
   const supabase = getSupabaseServerClient();
 
   const { data, error } = await supabase
@@ -58,7 +61,7 @@ export async function updateOrderStatus(orderId: string, paymentStatus: string) 
       payment_status: paymentStatus,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", orderId)
+    .eq("order_id", orderId)
     .select()
     .maybeSingle();
 
@@ -80,11 +83,11 @@ export async function markOrderDelivered(
     .from("orders")
     .update({
       delivery_status: "delivered",
-      delivered_at: new Date().toISOString(),
       delivered_item_ids: deliveredItemIds ?? [],
+      delivered_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
-    .eq("id", orderId)
+    .eq("order_id", orderId)
     .select()
     .maybeSingle();
 

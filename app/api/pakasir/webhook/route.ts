@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (Number(order.total_amount) !== Number(amount)) {
+    if (Number(order.gross_amount) !== Number(amount)) {
       return NextResponse.json(
         { error: "Amount tidak cocok" },
         { status: 400 }
@@ -53,10 +53,9 @@ export async function POST(req: NextRequest) {
     }
 
     if (status === "completed") {
-      await updateOrderStatus(order.id, "paid");
+      await updateOrderStatus(order.order_id, "paid");
 
       const qty = order.quantity || 1;
-
       const product = products.find((p) => p.id === order.product_id);
 
       if (!product) {
@@ -80,12 +79,12 @@ export async function POST(req: NextRequest) {
           to: order.buyer_email,
           buyerName: order.buyer_name,
           productName: product.name,
-          orderId: order.id,
+          orderId: order.order_id,
           accounts: items,
         });
 
         await markOrderDelivered(
-          order.id,
+          order.order_id,
           items.map((item) => item.id)
         );
       } catch (error) {

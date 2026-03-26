@@ -11,6 +11,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email wajib diisi" }, { status: 400 });
     }
 
+    if (!buyerName) {
+      return NextResponse.json(
+        { error: "Nama pembeli wajib diisi" },
+        { status: 400 }
+      );
+    }
+
+    if (!buyerWhatsapp) {
+      return NextResponse.json(
+        { error: "WhatsApp wajib diisi" },
+        { status: 400 }
+      );
+    }
+
     const qty = Number(quantity || 1);
 
     if (qty < 1) {
@@ -24,7 +38,7 @@ export async function POST(req: Request) {
       .select("id, name, slug, price, stock, is_active")
       .eq("id", productId)
       .eq("is_active", true)
-      .single();
+      .maybeSingle();
 
     if (productError || !product) {
       return NextResponse.json(
@@ -40,24 +54,28 @@ export async function POST(req: Request) {
       );
     }
 
-    const grossAmount = product.price * qty;
-    const orderId = `ORDER-${Date.now()}`;
-    const invoiceCode = `INV-${Date.now()}`;
+    const grossAmount = Number(product.price) * qty;
+    const now = Date.now();
+    const orderId = `ORDER-${now}`;
+    const invoiceCode = `INV-${now}`;
     const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${orderId}?amount=${grossAmount}`;
 
     const { error: insertError } = await supabase.from("orders").insert({
-      order_id: orderId,
-      product_id: product.id,
-      buyer_email: buyerEmail,
-      buyer_name: buyerName,
-      buyer_whatsapp: buyerWhatsapp,
-      quantity: qty,
-      gross_amount: grossAmount,
-      payment_status: "pending",
-      delivery_status: "pending",
-    });
+  order_id: orderId,
+  invoice_code: invoiceCode,
+  product_id: product.id,
+  buyer_email: buyerEmail,
+  buyer_name: buyerName,
+  buyer_whatsapp: buyerWhatsapp,
+  quantity: qty,
+  gross_amount: grossAmount,
+  payment_status: "pending",
+  delivery_status: "pending",
+});
 
     if (insertError) {
+      console.error("INSERT ORDER ERROR:", insertError);
+
       return NextResponse.json(
         { error: insertError.message },
         { status: 500 }
@@ -74,6 +92,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       orderId,
+      invoiceCode,
       amount: grossAmount,
       paymentUrl: payment.payment_url,
     });
