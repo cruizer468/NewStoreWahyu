@@ -71,6 +71,18 @@ export async function POST(
       );
     }
 
+    const { error: stockError } = await supabase.rpc("decrement_product_stock", {
+      p_product_id: order.product_id,
+      p_qty: order.quantity,
+    });
+
+    if (stockError) {
+      return NextResponse.json(
+        { error: stockError.message },
+        { status: 500 }
+      );
+    }
+
     const deliveredAccounts = items.map((item) => ({
       id: item.id,
       email: item.account_email,
