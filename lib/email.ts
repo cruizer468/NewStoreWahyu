@@ -1,27 +1,41 @@
-import { Resend } from "resend";
+type DeliveredAccount = {
+  email?: string;
+  password?: string;
+  code?: string;
+};
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+export async function sendAccountEmail(params: {
+  to: string;
+  buyerName?: string;
+  productName: string;
+  orderId: string;
+  accounts: DeliveredAccount[];
+}) {
+  const lines = params.accounts
+    .map((acc, index) => {
+      return [
+        `Akun ${index + 1}`,
+        acc.email ? `Email: ${acc.email}` : null,
+        acc.password ? `Password: ${acc.password}` : null,
+        acc.code ? `Kode: ${acc.code}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n");
+    })
+    .join("\n\n");
 
-export async function sendAccountEmail(
-  to: string,
-  accountEmail: string,
-  accountPassword: string
-) {
-  return resend.emails.send({
-    from: process.env.EMAIL_FROM!,
-    to,
-    subject: "Pembayaran berhasil ⚡",
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2>Pembayaran berhasil ⚡</h2>
-        <p>Terima kasih, pesanan kamu sudah dibayar.</p>
-        <p>Berikut akun yang kamu beli:</p>
-        <ul>
-          <li><b>Email akun:</b> ${accountEmail}</li>
-          <li><b>Password akun:</b> ${accountPassword}</li>
-        </ul>
-        <p>Simpan data ini dengan aman ya.</p>
-      </div>
-    `,
-  });
+  const content = `Halo ${params.buyerName || "Customer"},
+
+Pembayaran untuk order ${params.orderId} sudah berhasil.
+
+Produk: ${params.productName}
+
+Berikut data akun kamu:
+${lines}
+
+Terima kasih.`;
+
+  console.log("=== EMAIL TERKIRIM ===");
+  console.log("TO:", params.to);
+  console.log(content);
 }

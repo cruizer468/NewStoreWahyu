@@ -8,33 +8,31 @@ export type Order = {
   grossAmount: number;
   status: "pending" | "paid" | "expired" | "failed";
   delivered: boolean;
-  qrString?: string;
-  qrUrl?: string;
-  expiryTime?: string;
+  deliveredItems?: string[];
 };
 
 export const orders: Order[] = [];
 
 export function getOrder(orderId: string) {
-  return orders.find((o: Order) => o.orderId === orderId);
+  return orders.find((o) => o.orderId === orderId);
 }
 
 export function updateOrderStatus(
   orderId: string,
   status: Order["status"]
 ) {
-  const order = orders.find((o: Order) => o.orderId === orderId);
-
-  if (!order) {
-    console.error("Order tidak ditemukan:", orderId);
-    return false;
-  }
+  const order = orders.find((o) => o.orderId === orderId);
+  if (!order) return false;
 
   order.status = status;
+  return true;
+}
 
-  if (status === "paid") {
-    order.delivered = true;
-  }
+export function markOrderDelivered(orderId: string, deliveredItems: string[]) {
+  const order = orders.find((o) => o.orderId === orderId);
+  if (!order) return false;
 
+  order.delivered = true;
+  order.deliveredItems = deliveredItems;
   return true;
 }
