@@ -12,6 +12,7 @@ export async function POST(req: Request) {
     }
 
     const qty = Number(quantity || 1);
+
     if (qty < 1) {
       return NextResponse.json({ error: "Jumlah tidak valid" }, { status: 400 });
     }
@@ -20,12 +21,16 @@ export async function POST(req: Request) {
 
     const { data: product, error: productError } = await supabase
       .from("products")
-      .select("*")
+      .select("id, name, slug, price, stock, is_active")
       .eq("id", productId)
+      .eq("is_active", true)
       .single();
 
     if (productError || !product) {
-      return NextResponse.json({ error: "Produk tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Produk tidak ditemukan" },
+        { status: 404 }
+      );
     }
 
     if (qty > product.stock) {
@@ -52,7 +57,10 @@ export async function POST(req: Request) {
     });
 
     if (insertError) {
-      return NextResponse.json({ error: insertError.message }, { status: 500 });
+      return NextResponse.json(
+        { error: insertError.message },
+        { status: 500 }
+      );
     }
 
     const pakasir = getPakasirClient();
@@ -70,6 +78,9 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("CHECKOUT ERROR:", error);
-    return NextResponse.json({ error: "Checkout gagal" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal membuat pembayaran Pakasir" },
+      { status: 500 }
+    );
   }
 }

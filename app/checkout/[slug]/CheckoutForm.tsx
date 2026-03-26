@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import type { Product } from "@/lib/product-types";
 
-type Product = {
-  id: string;
-  name: string;
-  slug: string;
-  price: number;
-  stock: number;
-  description: string;
-  image?: string;
-};
+
 
 export default function CheckoutForm({ product }: { product: Product }) {
   const [fullName, setFullName] = useState("");
