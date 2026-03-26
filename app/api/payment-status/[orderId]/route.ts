@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { pakasir } from "@/lib/pakasir";
+import { getPakasirClient } from "@/lib/pakasir";
+const pakasir = getPakasirClient();
 
 export async function GET(
   req: NextRequest,

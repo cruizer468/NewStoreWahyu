@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { products } from "@/lib/products";
-import { orders } from "@/lib/orders";
-import { pakasir } from "@/lib/pakasir";
+import { getPakasirClient } from "@/lib/pakasir";
 
 export async function POST(req: Request) {
   try {
@@ -36,21 +35,9 @@ export async function POST(req: Request) {
 
     const grossAmount = product.price * qty;
     const orderId = `ORDER-${Date.now()}`;
+    const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${orderId}?amount=${grossAmount}`;
 
-    // simpan order pending dulu
-    orders.push({
-      orderId,
-      productId,
-      buyerEmail,
-      buyerName,
-      buyerWhatsapp,
-      quantity: qty,
-      grossAmount,
-      status: "pending",
-      delivered: false,
-    });
-
-    const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${orderId}`;
+    const pakasir = getPakasirClient();
 
     const payment = await pakasir.createPayment(
       "qris",
@@ -61,8 +48,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       orderId,
+      amount: grossAmount,
       paymentUrl: payment.payment_url,
-      pakasir: payment,
     });
   } catch (error) {
     console.error("CHECKOUT ERROR:", error);
