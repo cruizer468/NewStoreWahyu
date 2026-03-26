@@ -14,3 +14,27 @@ export type Order = {
 };
 
 export const orders: Order[] = [];
+
+export function getOrder(orderId: string) {
+  return orders.find((o: Order) => o.orderId === orderId);
+}
+
+export function updateOrderStatus(
+  orderId: string,
+  status: Order["status"]
+) {
+  const order = orders.find((o: Order) => o.orderId === orderId);
+
+  if (!order) {
+    console.error("Order tidak ditemukan:", orderId);
+    return false;
+  }
+
+  order.status = status;
+
+  if (status === "paid") {
+    order.delivered = true;
+  }
+
+  return true;
+}

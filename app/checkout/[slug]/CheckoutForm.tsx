@@ -13,11 +13,15 @@ type Product = {
   image?: string;
 };
 
+type PaymentMethod = "midtrans" | "pakasir";
+
 export default function CheckoutForm({ product }: { product: Product }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [paymentMethod, setPaymentMethod] =
+    useState<PaymentMethod>("pakasir");
   const [loading, setLoading] = useState(false);
 
   const maxStock = product.stock;
@@ -39,6 +43,26 @@ export default function CheckoutForm({ product }: { product: Product }) {
       return;
     }
 
+    if (!fullName.trim()) {
+      alert("Nama lengkap wajib diisi");
+      return;
+    }
+
+    if (!email.trim()) {
+      alert("Email wajib diisi");
+      return;
+    }
+
+    if (!whatsapp.trim()) {
+      alert("Nomor WhatsApp wajib diisi");
+      return;
+    }
+
+    if (quantity < 1) {
+      alert("Jumlah minimal 1");
+      return;
+    }
+
     if (quantity > maxStock) {
       alert("Jumlah melebihi stok tersedia");
       return;
@@ -54,10 +78,11 @@ export default function CheckoutForm({ product }: { product: Product }) {
         },
         body: JSON.stringify({
           productId: product.id,
-          buyerEmail: email,
-          buyerName: fullName,
-          buyerWhatsapp: whatsapp,
+          buyerEmail: email.trim(),
+          buyerName: fullName.trim(),
+          buyerWhatsapp: whatsapp.trim(),
           quantity,
+          paymentMethod,
         }),
       });
 
@@ -65,6 +90,11 @@ export default function CheckoutForm({ product }: { product: Product }) {
 
       if (!res.ok) {
         alert(data.error || "Checkout gagal");
+        return;
+      }
+
+      if (!data?.paymentUrl) {
+        alert("Link pembayaran tidak ditemukan");
         return;
       }
 
@@ -190,6 +220,41 @@ export default function CheckoutForm({ product }: { product: Product }) {
 
       <section>
         <div className="mb-2 flex items-center gap-2 border-b-2 border-black pb-2">
+          <span>💳</span>
+          <h3 className="text-sm font-black uppercase text-black">
+            Metode Pembayaran
+          </h3>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => setPaymentMethod("pakasir")}
+            className={`border-4 px-4 py-3 text-left text-sm font-black uppercase transition ${
+              paymentMethod === "pakasir"
+                ? "border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000]"
+                : "border-black bg-white text-black hover:bg-yellow-100"
+            }`}
+          >
+            QRIS - Pakasir
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setPaymentMethod("midtrans")}
+            className={`border-4 px-4 py-3 text-left text-sm font-black uppercase transition ${
+              paymentMethod === "midtrans"
+                ? "border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000]"
+                : "border-black bg-white text-black hover:bg-yellow-100"
+            }`}
+          >
+            Midtrans
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-2 flex items-center gap-2 border-b-2 border-black pb-2">
           <span>🛡️</span>
           <h3 className="text-sm font-black uppercase text-black">
             Verifikasi Keamanan
@@ -234,6 +299,11 @@ export default function CheckoutForm({ product }: { product: Product }) {
             </div>
 
             <div className="flex items-center justify-between border-b border-black pb-2">
+              <span>Metode bayar</span>
+              <span>{paymentMethod === "pakasir" ? "Pakasir" : "Midtrans"}</span>
+            </div>
+
+            <div className="flex items-center justify-between border-b border-black pb-2">
               <span>Subtotal</span>
               <span>Rp {subtotal.toLocaleString("id-ID")}</span>
             </div>
@@ -255,10 +325,21 @@ export default function CheckoutForm({ product }: { product: Product }) {
       <div className="space-y-3">
         <button
           onClick={handleCheckout}
-          disabled={!email || !fullName || loading || quantity < 1 || soldOut}
+          disabled={
+            !email.trim() ||
+            !fullName.trim() ||
+            !whatsapp.trim() ||
+            loading ||
+            quantity < 1 ||
+            soldOut
+          }
           className="w-full border-4 border-black bg-yellow-400 px-4 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {soldOut ? "Stok Habis" : loading ? "Memproses..." : "⚡ Lanjut ke Pembayaran"}
+          {soldOut
+            ? "Stok Habis"
+            : loading
+            ? "Memproses..."
+            : "⚡ Lanjut ke Pembayaran"}
         </button>
 
         <Link
