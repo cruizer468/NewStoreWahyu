@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { products } from "@/lib/products";
+import { getSupabaseServerClient } from "@/lib/supabase";
 import { getPakasirClient } from "@/lib/pakasir";
 
 export async function POST(req: Request) {
@@ -11,19 +11,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email wajib diisi" }, { status: 400 });
     }
 
-    const product = products.find((p) => p.id === productId);
-
-    if (!product) {
-      return NextResponse.json(
-        { error: "Produk tidak ditemukan" },
-        { status: 404 }
-      );
-    }
-
     const qty = Number(quantity || 1);
-
     if (qty < 1) {
       return NextResponse.json({ error: "Jumlah tidak valid" }, { status: 400 });
+    }
+
+    const supabase = getSupabaseServerClient();
+
+    const { data: product, error: productError } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", productId)
+      .single();
+
+    if (productError || !product) {
+      return NextResponse.json({ error: "Produk tidak ditemukan" }, { status: 404 });
     }
 
     if (qty > product.stock) {
@@ -37,8 +39,23 @@ export async function POST(req: Request) {
     const orderId = `ORDER-${Date.now()}`;
     const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${orderId}?amount=${grossAmount}`;
 
-    const pakasir = getPakasirClient();
+    const { error: insertError } = await supabase.from("orders").insert({
+      order_id: orderId,
+      product_id: product.id,
+      buyer_email: buyerEmail,
+      buyer_name: buyerName,
+      buyer_whatsapp: buyerWhatsapp,
+      quantity: qty,
+      gross_amount: grossAmount,
+      payment_status: "pending",
+      delivery_status: "pending",
+    });
 
+    if (insertError) {
+      return NextResponse.json({ error: insertError.message }, { status: 500 });
+    }
+
+    const pakasir = getPakasirClient();
     const payment = await pakasir.createPayment(
       "qris",
       orderId,
@@ -53,9 +70,6 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("CHECKOUT ERROR:", error);
-    return NextResponse.json(
-      { error: "Gagal membuat pembayaran Pakasir" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Checkout gagal" }, { status: 500 });
   }
 }

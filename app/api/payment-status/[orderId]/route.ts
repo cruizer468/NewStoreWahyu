@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPakasirClient } from "@/lib/pakasir";
-const pakasir = getPakasirClient();
 
 export async function GET(
   req: NextRequest,
@@ -11,26 +10,15 @@ export async function GET(
     const amountParam = req.nextUrl.searchParams.get("amount");
 
     if (!amountParam) {
-      return NextResponse.json(
-        { error: "Amount wajib dikirim" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Amount wajib dikirim" }, { status: 400 });
     }
 
     const amount = Number(amountParam);
-
-    if (!Number.isFinite(amount) || amount < 500) {
-      return NextResponse.json(
-        { error: "Amount tidak valid" },
-        { status: 400 }
-      );
-    }
-
+    const pakasir = getPakasirClient();
     const detail = await pakasir.detailPayment(orderId, amount);
 
     return NextResponse.json({
       orderId,
-      amount,
       status: detail.status,
       detail,
     });
