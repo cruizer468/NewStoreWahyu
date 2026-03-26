@@ -94,7 +94,7 @@ export async function markOrderDelivered(
   };
 
   if (deliveredItemIds && deliveredItemIds.length > 0) {
-    payload.delivered_item_ids = deliveredItemIds;
+    payload.delivered_accounts = deliveredItemIds;
   }
 
   const { data, error } = await supabase

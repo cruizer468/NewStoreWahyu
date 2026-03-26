@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
       const deliveredAccounts = items.map((item) => ({
         email: item.account_email ?? undefined,
         password: item.account_password ?? undefined,
-        code: item.account_note ?? undefined,
+        code: item.account_code ?? undefined,
       }));
 
       await sendAccountEmail({

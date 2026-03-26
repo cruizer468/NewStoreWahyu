@@ -5,10 +5,12 @@ export type InventoryItem = {
   id: string;
   product_id: string;
   account_email: string | null;
-  account_username: string | null;
   account_password: string | null;
+  account_code: string | null;
+  account_username: string | null;
   account_note: string | null;
-  status: string;
+  status: string | null;
+  is_sold: boolean | null;
   order_id: string | null;
 };
 
@@ -25,14 +27,17 @@ export async function takeInventory(
       id,
       product_id,
       account_email,
-      account_username,
       account_password,
+      account_code,
+      account_username,
       account_note,
       status,
+      is_sold,
       order_id
     `)
     .eq("product_id", productId)
     .eq("status", "pending")
+    .eq("is_sold", false)
     .is("order_id", null)
     .limit(quantity);
 
@@ -67,10 +72,12 @@ export async function takeInventory(
       id,
       product_id,
       account_email,
-      account_username,
       account_password,
+      account_code,
+      account_username,
       account_note,
       status,
+      is_sold,
       order_id
     `)
     .in("id", inventoryIds);
@@ -95,6 +102,7 @@ export async function releaseInventory(
     .from("inventory")
     .update({
       status: "pending",
+      is_sold: false,
       order_id: null,
       updated_at: new Date().toISOString(),
     })
@@ -118,26 +126,28 @@ export async function markInventoryDelivered(
   inventoryIds: string[],
   orderId: string
 ) {
-    if (!inventoryIds.length) return [];
+  if (!inventoryIds.length) return [];
 
-    const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseServerClient();
 
-    const { data, error } = await supabase
-      .from("inventory")
-      .update({
-        status: "delivered",
-        order_id: orderId,
-        delivered_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .in("id", inventoryIds)
-      .eq("order_id", orderId)
-      .select();
+  const { data, error } = await supabase
+    .from("inventory")
+    .update({
+      status: "delivered",
+      is_sold: true,
+      order_id: orderId,
+      sold_at: new Date().toISOString(),
+      delivered_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .in("id", inventoryIds)
+    .eq("order_id", orderId)
+    .select();
 
-    if (error) {
-      console.error("MARK INVENTORY DELIVERED ERROR:", error);
-      return null;
-    }
+  if (error) {
+    console.error("MARK INVENTORY DELIVERED ERROR:", error);
+    return null;
+  }
 
-    return data;
+  return data;
 }
