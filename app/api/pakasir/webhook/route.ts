@@ -8,6 +8,13 @@ import { products } from "@/lib/products";
 import { takeInventory, releaseInventory } from "@/lib/inventory";
 import { sendAccountEmail } from "@/lib/email";
 
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    message: "Pakasir webhook endpoint aktif. Gunakan method POST.",
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
