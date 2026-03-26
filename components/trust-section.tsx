@@ -1,33 +1,32 @@
 const items = [
   {
     title: "Aman & Terpercaya",
-    description: "Transaksi dibuat sederhana dan data pelanggan dijaga dengan baik.",
+    desc: "Transaksi dibantu verifikasi dan proses pengiriman cepat.",
   },
   {
     title: "Sistem Otomatis",
-    description: "Pesanan dapat diproses cepat tanpa harus menunggu balasan manual.",
+    desc: "Payment gateway dan pengiriman akun bisa berjalan otomatis.",
   },
   {
     title: "Bantuan 24/7",
-    description: "Sediakan channel bantuan agar pengguna mudah menghubungi support.",
+    desc: "Kendala checkout atau produk bisa dibantu lewat channel.",
   },
 ];
 
-export function TrustSection() {
+export default function TrustSection() {
   return (
-    <section className="bg-[#fff3a3]">
-      <div className="pika-container py-16">
-        <div className="grid gap-5 md:grid-cols-3">
-          {items.map((item) => (
-            <div key={item.title} className="pika-card p-6">
-              <div className="mb-3 text-2xl">⚡</div>
-              <h3 className="text-lg font-black text-black">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-neutral-700">
-                {item.description}
-              </p>
-            </div>
-          ))}
-        </div>
+    <section className="bg-[#efe48c]">
+      <div className="mx-auto grid max-w-6xl gap-4 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-8">
+        {items.map((item) => (
+          <div
+            key={item.title}
+            className="rounded-2xl border-4 border-black bg-white p-5 shadow-[4px_4px_0_#000]"
+          >
+            <p className="text-xs">⚡</p>
+            <h3 className="mt-2 text-sm font-black uppercase">{item.title}</h3>
+            <p className="mt-2 text-xs leading-5 text-black/70">{item.desc}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

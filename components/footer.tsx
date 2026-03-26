@@ -1,36 +1,20 @@
-export function Footer() {
+export default function Footer() {
   return (
-    <footer className="bg-[#fff8d6]">
-      <div className="pika-container py-10">
-        <div className="grid gap-8 md:grid-cols-3">
-          <div>
-            <h3 className="text-lg font-black text-black">DIGITAL STORE ⚡</h3>
-            <p className="mt-3 text-sm leading-6 text-neutral-700">
-              Template toko digital modern dengan nuansa electric yellow.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-bold uppercase tracking-wide text-neutral-600">
-              Tautan Cepat
-            </h4>
-            <ul className="mt-3 space-y-2 text-sm text-neutral-800">
-              <li><a href="#produk">Produk</a></li>
-              <li><a href="#">Syarat & Ketentuan</a></li>
-              <li><a href="#">Kebijakan Privasi</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-bold uppercase tracking-wide text-neutral-600">
-              Hubungi Kami
-            </h4>
-            <p className="mt-3 text-sm text-neutral-800">@support_bot</p>
-          </div>
+    <footer className="border-t-4 border-black bg-[#f4efd8]">
+      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 text-xs text-black/70 sm:px-6 md:grid-cols-3 lg:px-8">
+        <div>
+          <h3 className="text-sm font-black uppercase text-black">Digital Store ⚡</h3>
+          <p className="mt-2">Template store digital dengan payment otomatis.</p>
         </div>
 
-        <div className="mt-10 border-t-2 border-black pt-6 text-sm text-neutral-600">
-          © 2026 Digital Store. Dibuat dengan Next.js.
+        <div>
+          <h3 className="text-sm font-black uppercase text-black">Hubungi Kami</h3>
+          <p className="mt-2">Telegram: @wayyy_store</p>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-black uppercase text-black">Powered By</h3>
+          <p className="mt-2">Next.js • Supabase • Pakasir</p>
         </div>
       </div>
     </footer>

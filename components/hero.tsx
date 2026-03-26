@@ -1,43 +1,52 @@
-export function Hero() {
+import Link from "next/link";
+
+export default function Hero() {
   return (
-    <section className="border-b-2 border-black bg-yellow-300">
-      <div className="pika-container py-16 md:py-24">
-        <div className="grid items-center gap-10 md:grid-cols-2">
-          <div>
-            <span className="pika-badge-yellow">⚡ Premium Digital Store</span>
-
-            <h1 className="mt-5 max-w-2xl text-4xl font-black leading-tight tracking-tight text-black md:text-6xl">
-              Solusi Kebutuhan
-              <span className="block">Digital Premium ⚡</span>
-            </h1>
-
-            <p className="mt-5 max-w-xl text-base leading-7 text-neutral-800 md:text-lg">
-              Solusi Kebutuhan Digital Premium. Mulai dari Akses ChatGPT Team, Akun Hiburan, hingga Lisensi Software Original dengan Harga Terjangkau.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#produk" className="pika-button-primary">
-                Lihat Produk
-              </a>
-              <a href="#telegram" className="pika-button-secondary">
-                Join Channel
-              </a>
-            </div>
+    <section className="border-b-4 border-black bg-[#ffd400]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-16">
+        <div className="flex flex-col justify-center">
+          <div className="mb-4 inline-flex w-fit rounded-full border-2 border-black bg-[#fff3b0] px-3 py-1 text-[10px] font-black uppercase tracking-wide">
+            Top up & akun digital murah
           </div>
 
-          <div className="flex justify-center md:justify-end">
-            <div className="pika-card pika-lightning flex h-[280px] w-full max-w-[420px] items-center justify-center bg-white p-8">
-              <div className="text-center">
-                <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border-2 border-black bg-yellow-400 text-4xl shadow-[4px_4px_0px_#111]">
-                  ⚡
-                </div>
-                <h3 className="mt-5 text-2xl font-black text-black">
-                  Wayyy Store
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-neutral-700">
-                  Semua Kebutuhan Digital, Dalam Sekali Klik.
-                </p>
+          <h1 className="max-w-xl text-4xl font-black leading-tight text-black sm:text-5xl">
+            Solusi Kebutuhan
+            <br />
+            Digital Premium ⚡
+          </h1>
+
+          <p className="mt-4 max-w-lg text-sm leading-6 text-black/80 sm:text-base">
+            Solusi kebutuhan digital premium mulai dari akun CMR/TL, akun hiburan,
+            hingga lisensi software dengan harga hemat dan proses instan.
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="#produk"
+              className="rounded-md border-4 border-black bg-black px-5 py-3 text-sm font-black uppercase text-white shadow-[4px_4px_0_#000]"
+            >
+              Beli Produk
+            </Link>
+
+            <Link
+              href="#telegram"
+              className="rounded-md border-4 border-black bg-white px-5 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000]"
+            >
+              Join Channel
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center">
+          <div className="w-full max-w-md rounded-2xl border-4 border-black bg-[#f3f0df] p-6 shadow-[6px_6px_0_#000]">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-black bg-[#ffd400] text-3xl">
+                ⚡
               </div>
+              <h2 className="mt-4 text-2xl font-black">Wayyy Store</h2>
+              <p className="mt-2 text-sm text-black/70">
+                Semua kebutuhan digital, dalam sekali klik.
+              </p>
             </div>
           </div>
         </div>

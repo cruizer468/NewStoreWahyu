@@ -1,40 +1,54 @@
-const steps = [
-  {
-    number: "1",
-    title: "Pilih Produk",
-    description: "Pilih paket atau akun digital sesuai kebutuhan Anda.",
-  },
-  {
-    number: "2",
-    title: "Pembayaran Cepat",
-    description: "Lakukan pembayaran dengan metode yang tersedia.",
-  },
-  {
-    number: "3",
-    title: "Pengiriman Kilat",
-    description: "Detail akun, invite, atau voucher dikirim dengan cepat.",
-  },
-];
+import Link from "next/link";
 
-export function ProcessSteps() {
+export default function Hero() {
   return (
-    <section className="pika-grid-bg bg-[#fff8d6]">
-      <div className="pika-container py-16">
-        <h2 className="pika-section-title">Proses Instan & Otomatis</h2>
+    <section className="border-b-4 border-black bg-[#ffd400]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-16">
+        <div className="flex flex-col justify-center">
+          <div className="mb-4 inline-flex w-fit rounded-full border-2 border-black bg-[#fff3b0] px-3 py-1 text-[10px] font-black uppercase tracking-wide">
+            Top up & akun digital murah
+          </div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {steps.map((step) => (
-            <div key={step.number} className="pika-card p-6">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-black text-sm font-bold text-white">
-                {step.number}
+          <h1 className="max-w-xl text-4xl font-black leading-tight text-black sm:text-5xl">
+            Solusi Kebutuhan
+            <br />
+            Digital Premium ⚡
+          </h1>
+
+          <p className="mt-4 max-w-lg text-sm leading-6 text-black/80 sm:text-base">
+            Solusi kebutuhan digital premium mulai dari akun CMR/TL, akun hiburan,
+            hingga lisensi software dengan harga hemat dan proses instan.
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="#produk"
+              className="rounded-md border-4 border-black bg-black px-5 py-3 text-sm font-black uppercase text-white shadow-[4px_4px_0_#000]"
+            >
+              Beli Produk
+            </Link>
+
+            <Link
+              href="#telegram"
+              className="rounded-md border-4 border-black bg-white px-5 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000]"
+            >
+              Join Channel
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center">
+          <div className="w-full max-w-md rounded-2xl border-4 border-black bg-[#f3f0df] p-6 shadow-[6px_6px_0_#000]">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-black bg-[#ffd400] text-3xl">
+                ⚡
               </div>
-
-              <h3 className="mt-4 text-lg font-black text-black">{step.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-neutral-700">
-                {step.description}
+              <h2 className="mt-4 text-2xl font-black">Wayyy Store</h2>
+              <p className="mt-2 text-sm text-black/70">
+                Semua kebutuhan digital, dalam sekali klik.
               </p>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

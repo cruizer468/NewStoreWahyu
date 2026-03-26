@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/products-db";
+import { getProduct } from "@/lib/products-db";
 import CheckoutForm from "./CheckoutForm";
+import type { Product } from "@/lib/product-types";
 
 export default async function CheckoutPage({
   params,
@@ -8,7 +9,7 @@ export default async function CheckoutPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product: Product | null = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
