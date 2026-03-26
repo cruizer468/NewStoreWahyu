@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProduct } from "@/lib/products-db";
+import { getProductBySlug } from "@/lib/products-db";
 import CheckoutForm from "./CheckoutForm";
 import type { Product } from "@/lib/product-types";
 
@@ -16,49 +16,57 @@ export default async function CheckoutPage({
   }
 
   return (
-    <main className="min-h-screen bg-[repeating-linear-gradient(135deg,#d6d1b8_0,#d6d1b8_18px,#c7c1a4_18px,#c7c1a4_36px)]">
-      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6 border-4 border-black bg-[#fff3b0] p-5 shadow-[5px_5px_0_#000]">
-          <p className="text-[11px] font-black uppercase tracking-wide text-neutral-700">
-            Checkout Produk
+    <main className="min-h-screen bg-[repeating-linear-gradient(135deg,#ece8d7_0,#ece8d7_14px,#e3decb_14px,#e3decb_28px)] px-3 py-6">
+      <section className="mx-auto w-full max-w-md border-4 border-black bg-[#efefef] p-4 shadow-[6px_6px_0_#000] sm:p-5">
+        <div className="border-b-2 border-black pb-3">
+          <p className="text-[11px] font-black uppercase tracking-wide text-black/70">
+            🛒 Checkout
           </p>
-          <h1 className="mt-2 text-2xl font-black uppercase text-black">
+          <h1 className="mt-1 text-xl font-black uppercase text-black">
             {product.name}
           </h1>
-          <p className="mt-2 text-sm text-neutral-700">
-            {product.description || "Produk digital siap kirim otomatis."}
-          </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
-          <aside className="border-4 border-black bg-white p-5 shadow-[5px_5px_0_#000]">
-            <h2 className="text-lg font-black uppercase text-black">
-              Ringkasan Produk
-            </h2>
-
-            <div className="mt-4 space-y-3 text-[11px] font-black uppercase text-black">
-              <div className="flex items-center justify-between border-b border-black pb-2">
-                <span>Nama</span>
-                <span>{product.name}</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-black pb-2">
-                <span>Harga</span>
-                <span>Rp {product.price.toLocaleString("id-ID")}</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-black pb-2">
-                <span>Stok</span>
-                <span>{product.stock}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Status</span>
-                <span>{product.stock > 0 ? "Tersedia" : "Habis"}</span>
+        <div className="mt-4 border-4 border-black bg-[#f6d90f] p-3 shadow-[4px_4px_0_#000]">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-black uppercase text-black">
+                {product.name}
+              </h2>
+              <div className="mt-2 flex gap-2">
+                <span className="border-2 border-black bg-[#32d74b] px-2 py-1 text-[9px] font-black uppercase">
+                  Account
+                </span>
+                <span className="border-2 border-black bg-black px-2 py-1 text-[9px] font-black uppercase text-white">
+                  Instan
+                </span>
               </div>
             </div>
-          </aside>
 
-          <section className="border-4 border-black bg-white p-5 shadow-[5px_5px_0_#000]">
-            <CheckoutForm product={product} />
-          </section>
+            <div className="text-right">
+              <p className="text-3xl font-black text-black">
+                Rp {product.price.toLocaleString("id-ID")}
+              </p>
+              <p className="text-[9px] font-bold uppercase text-black/60">
+                per item
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 border-2 border-black bg-white p-3 text-[10px] leading-5 text-black">
+            <p className="font-black uppercase">Ketentuan Garansi :</p>
+            <p>- Garansi 7 hari setelah akun aktif dan voucher 100% valid</p>
+            <p>- Garansi jika akun tidak bisa login</p>
+            <p className="mt-2">Selain kendala di atas tidak ada garansi.</p>
+          </div>
+
+          <button className="mt-3 border-2 border-black bg-black px-3 py-2 text-[10px] font-black uppercase text-white shadow-[3px_3px_0_#000]">
+            Lihat Selengkapnya !
+          </button>
+        </div>
+
+        <div className="mt-5">
+          <CheckoutForm product={product}/>
         </div>
       </section>
     </main>

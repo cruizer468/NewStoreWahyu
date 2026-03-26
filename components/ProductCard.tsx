@@ -28,19 +28,24 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="mt-4 flex gap-2">
-        <Link
-          href={soldOut ? "#" : `/checkout/${product.slug}`}
-          className={`flex-1 rounded-full border-2 border-black px-3 py-2 text-center text-[11px] font-black uppercase ${
-            soldOut
-              ? "cursor-not-allowed bg-neutral-200 text-neutral-500"
-              : "bg-black text-white"
-          }`}
-        >
-          {soldOut ? "Stok Habis" : "Beli Sekarang"}
-        </Link>
+        {soldOut ? (
+          <button
+            disabled
+            className="flex-1 cursor-not-allowed rounded-full border-2 border-black bg-neutral-200 px-3 py-2 text-center text-[11px] font-black uppercase text-neutral-500"
+          >
+            Stok Habis
+          </button>
+        ) : (
+          <Link
+            href={`/checkout/${product.slug}`}
+            className="flex-1 rounded-full border-2 border-black bg-black px-3 py-2 text-center text-[11px] font-black uppercase text-white"
+          >
+            Beli Sekarang
+          </Link>
+        )}
 
         <Link
-          href={`/checkout/${product.slug}`}
+          href={`/produk/${product.slug}`}
           className="rounded-full border-2 border-black bg-white px-3 py-2 text-[11px] font-black uppercase text-black"
         >
           Detail
