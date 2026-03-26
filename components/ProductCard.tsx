@@ -6,28 +6,24 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <div className="rounded-2xl border-4 border-black bg-white p-4 shadow-[4px_4px_0_#000]">
-      <div className="mb-3">
-        <p className="text-[10px] font-black uppercase text-black/50">
-          Premium Account
-        </p>
-        <h3 className="mt-1 min-h-[48px] text-base font-black uppercase leading-5 text-black">
-          {product.name}
-        </h3>
-        <p className="mt-2 line-clamp-2 text-xs leading-5 text-black/70">
-          {product.description || "Produk digital premium."}
-        </p>
-      </div>
+      <p className="text-[10px] font-black uppercase text-black/50">
+        Premium Account
+      </p>
 
-      <div className="space-y-2 text-xs font-bold uppercase">
-        <div className="flex items-center justify-between border-b border-black pb-2">
-          <span>Stok</span>
-          <span>{product.stock}</span>
-        </div>
-      </div>
+      <h3 className="mt-2 text-base font-black uppercase text-black">
+        {product.name}
+      </h3>
 
-      <div className="mt-4">
+      <p className="mt-2 text-xs leading-5 text-black/70">
+        {product.description || "Produk digital premium."}
+      </p>
+
+      <div className="mt-4 border-t border-black pt-3">
         <p className="text-2xl font-black text-black">
           Rp {product.price.toLocaleString("id-ID")}
+        </p>
+        <p className="mt-1 text-xs font-bold uppercase text-black/60">
+          Stok: {product.stock}
         </p>
       </div>
 

@@ -5,10 +5,11 @@ import TrustSection from "@/components/trust-section";
 import TelegramCta from "@/components/telegram-cta";
 import Footer from "@/components/footer";
 import { getProducts } from "@/lib/products-db";
-import type { Product } from "@/lib/product-types";
 
 export default async function HomePage() {
-  const products: Product[] = await getProducts();
+  const products = await getProducts();
+
+  console.log("HOME PRODUCTS:", products);
 
   return (
     <main className="min-h-screen bg-[#e7e0c5]">

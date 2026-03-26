@@ -1,35 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import type { Product } from "@/lib/product-types";
 import ProductCard from "@/components/ProductCard";
-import CategoryTabs from "@/components/category-tabs";
-
-function detectCategory(product: Product) {
-  const text = `${product.name} ${product.description || ""}`.toLowerCase();
-
-  if (text.includes("fore")) return "Fore";
-  if (text.includes("netflix")) return "Netflix";
-  if (text.includes("spotify")) return "Spotify";
-  if (text.includes("canva")) return "Canva";
-  if (text.includes("youtube")) return "YouTube";
-
-  return "Lainnya";
-}
 
 export default function ProductsSection({ products }: { products: Product[] }) {
-  const categories = useMemo(() => {
-    const dynamic = Array.from(new Set(products.map(detectCategory)));
-    return ["Semua Produk", ...dynamic];
-  }, [products]);
-
-  const [activeCategory, setActiveCategory] = useState("Semua Produk");
-
-  const filteredProducts = useMemo(() => {
-    if (activeCategory === "Semua Produk") return products;
-    return products.filter((product) => detectCategory(product) === activeCategory);
-  }, [products, activeCategory]);
-
   return (
     <section id="produk" className="bg-[#e7e0c5]">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -43,17 +17,23 @@ export default function ProductsSection({ products }: { products: Product[] }) {
           </p>
         </div>
 
-        <CategoryTabs
-          categories={categories}
-          activeCategory={activeCategory}
-          onChange={setActiveCategory}
-        />
-
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <div className="mt-6 text-sm font-bold text-black">
+          Total produk: {products.length}
         </div>
+
+        {products.length === 0 ? (
+          <div className="mt-6 rounded-2xl border-4 border-black bg-white p-6 shadow-[4px_4px_0_#000]">
+            <p className="text-sm font-bold text-black">
+              Produk kosong. Cek query Supabase atau props products.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
