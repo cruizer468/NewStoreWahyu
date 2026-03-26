@@ -4,7 +4,7 @@ import {
   updateOrderStatus,
   markOrderDelivered,
 } from "@/lib/orders";
-import { products } from "@/lib/products";
+import { getSupabaseServerClient } from "@/lib/supabase";
 import { takeInventory, releaseInventory } from "@/lib/inventory";
 import { sendAccountEmail } from "@/lib/email";
 
@@ -55,16 +55,22 @@ export async function POST(req: NextRequest) {
     if (status === "completed") {
       await updateOrderStatus(order.order_id, "paid");
 
-      const qty = order.quantity || 1;
-      const product = products.find((p) => p.id === order.product_id);
+      const supabase = getSupabaseServerClient();
+      const { data: product, error: productError } = await supabase
+        .from("products")
+        .select("id, name")
+        .eq("id", order.product_id)
+        .maybeSingle();
 
-      if (!product) {
+      if (productError || !product) {
+        console.error("WEBHOOK PRODUCT ERROR:", productError);
         return NextResponse.json(
           { error: "Produk tidak ditemukan" },
           { status: 404 }
         );
       }
 
+      const qty = order.quantity || 1;
       const items = takeInventory(order.product_id, qty);
 
       if (!items) {
