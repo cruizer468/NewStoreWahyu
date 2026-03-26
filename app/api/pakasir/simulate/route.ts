@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { pakasir } from "@/lib/pakasir";
+import { getPakasirClient } from "@/lib/pakasir";
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +12,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await pakasir.simulationPayment(orderId, Number(amount));
+    const pakasir = getPakasirClient();
+
+    const result = await pakasir.simulationPayment(
+      orderId,
+      Number(amount)
+    );
 
     return NextResponse.json({
       success: true,
