@@ -2,8 +2,13 @@ import PaymentClient from "./payment-client";
 
 export default async function PaymentPage({
   params,
+  searchParams,
 }: {
-  params: { orderId: string };
+  params: Promise<{ orderId: string }>;
+  searchParams: Promise<{ amount?: string }>;
 }) {
-  return <PaymentClient orderId={params.orderId} />;
+  const { orderId } = await params;
+  const { amount } = await searchParams;
+
+  return <PaymentClient orderId={orderId} amount={amount || ""} />;
 }

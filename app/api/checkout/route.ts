@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { products } from "@/lib/products";
 import { orders } from "@/lib/orders";
+import { pakasir } from "@/lib/pakasir";
 
 export async function POST(req: Request) {
   try {
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const qty = quantity || 1;
+    const qty = Number(quantity || 1);
 
     if (qty < 1) {
       return NextResponse.json({ error: "Jumlah tidak valid" }, { status: 400 });
@@ -36,6 +37,7 @@ export async function POST(req: Request) {
     const grossAmount = product.price * qty;
     const orderId = `ORDER-${Date.now()}`;
 
+    // simpan order pending dulu
     orders.push({
       orderId,
       productId,
@@ -48,17 +50,19 @@ export async function POST(req: Request) {
       delivered: false,
     });
 
-    const pakasirSlug = "wayyystoredigital";
-    const redirectUrl = `https://wayyystoredigital.netlify.app/payment/${orderId}`;
+    const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${orderId}`;
 
-    const paymentUrl =
-      `https://app.pakasir.com/pay/${pakasirSlug}/${grossAmount}` +
-      `?order_id=${encodeURIComponent(orderId)}` +
-      `&redirect=${encodeURIComponent(redirectUrl)}`;
+    const payment = await pakasir.createPayment(
+      "qris",
+      orderId,
+      grossAmount,
+      redirectUrl
+    );
 
     return NextResponse.json({
       orderId,
-      paymentUrl,
+      paymentUrl: payment.payment_url,
+      pakasir: payment,
     });
   } catch (error) {
     console.error("CHECKOUT ERROR:", error);

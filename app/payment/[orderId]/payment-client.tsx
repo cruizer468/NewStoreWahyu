@@ -2,18 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-type Status = "loading" | "pending" | "paid" | "failed";
+type Status = "loading" | "pending" | "completed" | "failed";
 
-export default function PaymentClient({ orderId }: { orderId: string }) {
+export default function PaymentClient({
+  orderId,
+  amount,
+}: {
+  orderId: string;
+  amount: string;
+}) {
   const [status, setStatus] = useState<Status>("loading");
-  const [delivered, setDelivered] = useState(false);
+  const [simulating, setSimulating] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
     const checkStatus = async () => {
       try {
-        const res = await fetch(`/api/payment-status/${orderId}`);
+        const res = await fetch(
+          `/api/payment-status/${orderId}?amount=${encodeURIComponent(amount)}`
+        );
         const data = await res.json();
 
         if (!res.ok) {
@@ -21,9 +29,8 @@ export default function PaymentClient({ orderId }: { orderId: string }) {
           return;
         }
 
-        if (data.status === "paid") {
-          setStatus("paid");
-          setDelivered(Boolean(data.delivered));
+        if (data.status === "completed") {
+          setStatus("completed");
           return;
         }
 
@@ -40,27 +47,64 @@ export default function PaymentClient({ orderId }: { orderId: string }) {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [orderId]);
+  }, [orderId, amount]);
+
+  const handleSimulate = async () => {
+    try {
+      setSimulating(true);
+
+      const res = await fetch("/api/pakasir/simulate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          amount: Number(amount),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Simulasi gagal");
+        return;
+      }
+
+      alert("Simulasi pembayaran berhasil dijalankan");
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi error saat simulasi");
+    } finally {
+      setSimulating(false);
+    }
+  };
 
   if (status === "loading" || status === "pending") {
     return (
       <div className="mx-auto max-w-xl p-6">
         <h1 className="text-2xl font-bold">Menunggu Pembayaran</h1>
         <p className="mt-2">
-          Pembayaran sedang diverifikasi. Halaman ini akan update otomatis.
+          Pembayaran sedang dicek ke Pakasir. Halaman ini update otomatis.
         </p>
+
+        <button
+          onClick={handleSimulate}
+          disabled={simulating}
+          className="mt-4 rounded border px-4 py-2"
+        >
+          {simulating ? "Mensimulasikan..." : "Simulate Success (Sandbox)"}
+        </button>
       </div>
     );
   }
 
-  if (status === "paid") {
+  if (status === "completed") {
     return (
       <div className="mx-auto max-w-xl p-6">
         <h1 className="text-2xl font-bold">Pembayaran Berhasil</h1>
         <p className="mt-2">
-          {delivered
-            ? "Akun sudah dikirim ke email kamu."
-            : "Pembayaran berhasil, akun sedang diproses."}
+          Status pembayaran sudah completed di Pakasir sandbox.
         </p>
       </div>
     );

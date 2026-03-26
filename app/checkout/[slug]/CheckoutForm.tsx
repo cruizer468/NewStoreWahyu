@@ -13,15 +13,11 @@ type Product = {
   image?: string;
 };
 
-type PaymentMethod = "midtrans" | "pakasir";
-
 export default function CheckoutForm({ product }: { product: Product }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [paymentMethod, setPaymentMethod] =
-    useState<PaymentMethod>("pakasir");
   const [loading, setLoading] = useState(false);
 
   const maxStock = product.stock;
@@ -82,7 +78,6 @@ export default function CheckoutForm({ product }: { product: Product }) {
           buyerName: fullName.trim(),
           buyerWhatsapp: whatsapp.trim(),
           quantity,
-          paymentMethod,
         }),
       });
 
@@ -142,7 +137,7 @@ export default function CheckoutForm({ product }: { product: Product }) {
               className="w-full border-4 border-black bg-white px-3 py-2 text-sm outline-none"
             />
             <p className="mt-1 text-[10px] text-neutral-500">
-              Invoice dikirim ke email ini
+              Invoice dan status pembayaran dikirim ke email ini
             </p>
           </div>
 
@@ -214,7 +209,7 @@ export default function CheckoutForm({ product }: { product: Product }) {
         </div>
 
         <div className="mt-4 border-4 border-black bg-[#fff3b0] px-3 py-3 text-[11px] leading-5 text-black">
-          ⚡ Data pembeli digunakan untuk pengiriman invoice dan notifikasi.
+          ⚡ Data pembeli digunakan untuk notifikasi pesanan dan pengiriman akun.
         </div>
       </section>
 
@@ -226,30 +221,13 @@ export default function CheckoutForm({ product }: { product: Product }) {
           </h3>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => setPaymentMethod("pakasir")}
-            className={`border-4 px-4 py-3 text-left text-sm font-black uppercase transition ${
-              paymentMethod === "pakasir"
-                ? "border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000]"
-                : "border-black bg-white text-black hover:bg-yellow-100"
-            }`}
-          >
+        <div className="border-4 border-black bg-white p-4">
+          <div className="border-4 border-black bg-yellow-300 px-4 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000]">
             QRIS - Pakasir
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setPaymentMethod("midtrans")}
-            className={`border-4 px-4 py-3 text-left text-sm font-black uppercase transition ${
-              paymentMethod === "midtrans"
-                ? "border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000]"
-                : "border-black bg-white text-black hover:bg-yellow-100"
-            }`}
-          >
-            Midtrans
-          </button>
+          </div>
+          <p className="mt-2 text-[11px] text-neutral-600">
+            Pembayaran akan diarahkan ke halaman QRIS Pakasir.
+          </p>
         </div>
       </section>
 
@@ -284,6 +262,11 @@ export default function CheckoutForm({ product }: { product: Product }) {
         <div className="border-4 border-black bg-white p-3 shadow-[3px_3px_0_#000]">
           <div className="space-y-3 text-[11px] font-bold uppercase text-black">
             <div className="flex items-center justify-between border-b border-black pb-2">
+              <span>Produk</span>
+              <span>{product.name}</span>
+            </div>
+
+            <div className="flex items-center justify-between border-b border-black pb-2">
               <span>Harga per item</span>
               <span>Rp {product.price.toLocaleString("id-ID")}</span>
             </div>
@@ -300,7 +283,7 @@ export default function CheckoutForm({ product }: { product: Product }) {
 
             <div className="flex items-center justify-between border-b border-black pb-2">
               <span>Metode bayar</span>
-              <span>{paymentMethod === "pakasir" ? "Pakasir" : "Midtrans"}</span>
+              <span>Pakasir</span>
             </div>
 
             <div className="flex items-center justify-between border-b border-black pb-2">
