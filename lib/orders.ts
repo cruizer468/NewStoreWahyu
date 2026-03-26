@@ -1,38 +1,97 @@
-export type Order = {
-  orderId: string;
-  productId: string;
-  buyerEmail: string;
-  buyerName?: string;
-  buyerWhatsapp?: string;
-  quantity?: number;
-  grossAmount: number;
-  status: "pending" | "paid" | "expired" | "failed";
-  delivered: boolean;
-  deliveredItems?: string[];
-};
+import "server-only";
+import { getSupabaseServerClient } from "@/lib/supabase";
 
-export const orders: Order[] = [];
+export async function getOrder(orderId: string) {
+  const supabase = getSupabaseServerClient();
 
-export function getOrder(orderId: string) {
-  return orders.find((o) => o.orderId === orderId);
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("GET ORDER ERROR:", error);
+    return null;
+  }
+
+  return data;
 }
 
-export function updateOrderStatus(
+export async function getOrderById(orderId: string) {
+  const supabase = getSupabaseServerClient();
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select(`
+      id,
+      invoice_code,
+      buyer_name,
+      buyer_email,
+      buyer_whatsapp,
+      quantity,
+      total_amount,
+      payment_status,
+      delivery_status,
+      product_id,
+      products (
+        name
+      )
+    `)
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("GET ORDER BY ID ERROR:", error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function updateOrderStatus(orderId: string, paymentStatus: string) {
+  const supabase = getSupabaseServerClient();
+
+  const { data, error } = await supabase
+    .from("orders")
+    .update({
+      payment_status: paymentStatus,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", orderId)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    console.error("UPDATE ORDER STATUS ERROR:", error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function markOrderDelivered(
   orderId: string,
-  status: Order["status"]
+  deliveredItemIds?: string[]
 ) {
-  const order = orders.find((o) => o.orderId === orderId);
-  if (!order) return false;
+  const supabase = getSupabaseServerClient();
 
-  order.status = status;
-  return true;
-}
+  const { data, error } = await supabase
+    .from("orders")
+    .update({
+      delivery_status: "delivered",
+      delivered_at: new Date().toISOString(),
+      delivered_item_ids: deliveredItemIds ?? [],
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", orderId)
+    .select()
+    .maybeSingle();
 
-export function markOrderDelivered(orderId: string, deliveredItems: string[]) {
-  const order = orders.find((o) => o.orderId === orderId);
-  if (!order) return false;
+  if (error) {
+    console.error("MARK ORDER DELIVERED ERROR:", error);
+    return null;
+  }
 
-  order.delivered = true;
-  order.deliveredItems = deliveredItems;
-  return true;
+  return data;
 }

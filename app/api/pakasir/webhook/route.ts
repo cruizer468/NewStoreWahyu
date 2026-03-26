@@ -18,7 +18,6 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const { amount, order_id, status } = body;
 
     console.log("Pakasir webhook masuk:", body);
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
-    const order = getOrder(order_id);
+    const order = await getOrder(order_id);
 
     if (!order) {
       return NextResponse.json(
@@ -36,14 +35,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (order.grossAmount !== Number(amount)) {
+    if (Number(order.total_amount) !== Number(amount)) {
       return NextResponse.json(
         { error: "Amount tidak cocok" },
         { status: 400 }
       );
     }
 
-    if (order.status === "paid" && order.delivered) {
+    if (
+      order.payment_status === "paid" &&
+      order.delivery_status === "delivered"
+    ) {
       return NextResponse.json({
         success: true,
         message: "Order sudah pernah diproses",
@@ -51,10 +53,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (status === "completed") {
-      updateOrderStatus(order_id, "paid");
+      await updateOrderStatus(order.id, "paid");
 
       const qty = order.quantity || 1;
-      const product = products.find((p) => p.id === order.productId);
+
+      const product = products.find((p) => p.id === order.product_id);
 
       if (!product) {
         return NextResponse.json(
@@ -63,7 +66,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const items = takeInventory(order.productId, qty);
+      const items = takeInventory(order.product_id, qty);
 
       if (!items) {
         return NextResponse.json(
@@ -74,15 +77,15 @@ export async function POST(req: NextRequest) {
 
       try {
         await sendAccountEmail({
-          to: order.buyerEmail,
-          buyerName: order.buyerName,
+          to: order.buyer_email,
+          buyerName: order.buyer_name,
           productName: product.name,
-          orderId: order.orderId,
+          orderId: order.id,
           accounts: items,
         });
 
-        markOrderDelivered(
-          order.orderId,
+        await markOrderDelivered(
+          order.id,
           items.map((item) => item.id)
         );
       } catch (error) {

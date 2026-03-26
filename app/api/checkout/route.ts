@@ -42,6 +42,7 @@ export async function POST(req: Request) {
 
     const grossAmount = product.price * qty;
     const orderId = `ORDER-${Date.now()}`;
+    const invoiceCode = `INV-${Date.now()}`;
     const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${orderId}?amount=${grossAmount}`;
 
     const { error: insertError } = await supabase.from("orders").insert({
