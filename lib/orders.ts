@@ -32,7 +32,9 @@ export async function getOrderById(orderId: string) {
       quantity,
       gross_amount,
       payment_status,
+      paid_at,
       delivery_status,
+      delivered_at,
       product_id,
       products (
         name
@@ -55,12 +57,18 @@ export async function updateOrderStatus(
 ) {
   const supabase = getSupabaseServerClient();
 
+  const payload: Record<string, unknown> = {
+    payment_status: paymentStatus,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (paymentStatus === "paid") {
+    payload.paid_at = new Date().toISOString();
+  }
+
   const { data, error } = await supabase
     .from("orders")
-    .update({
-      payment_status: paymentStatus,
-      updated_at: new Date().toISOString(),
-    })
+    .update(payload)
     .eq("order_id", orderId)
     .select()
     .maybeSingle();
@@ -79,14 +87,19 @@ export async function markOrderDelivered(
 ) {
   const supabase = getSupabaseServerClient();
 
+  const payload: Record<string, unknown> = {
+    delivery_status: "delivered",
+    delivered_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  if (deliveredItemIds && deliveredItemIds.length > 0) {
+    payload.delivered_item_ids = deliveredItemIds;
+  }
+
   const { data, error } = await supabase
     .from("orders")
-    .update({
-      delivery_status: "delivered",
-      delivered_item_ids: deliveredItemIds ?? [],
-      delivered_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
+    .update(payload)
     .eq("order_id", orderId)
     .select()
     .maybeSingle();

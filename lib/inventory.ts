@@ -1,59 +1,143 @@
+import "server-only";
+import { getSupabaseServerClient } from "@/lib/supabase";
+
 export type InventoryItem = {
   id: string;
-  productId: string;
-  email?: string;
-  password?: string;
-  code?: string;
-  isSold: boolean;
+  product_id: string;
+  account_email: string | null;
+  account_username: string | null;
+  account_password: string | null;
+  account_note: string | null;
+  status: string;
+  order_id: string | null;
 };
 
-export const inventory: InventoryItem[] = [
-  {
-    id: "fore-1",
-    productId: "akun-fore-coffee",
-    email: "fore1@example.com",
-    password: "pass123",
-    isSold: false,
-  },
-  {
-    id: "fore-2",
-    productId: "akun-fore-coffee",
-    email: "fore2@example.com",
-    password: "pass456",
-    isSold: false,
-  },
-  {
-    id: "fore-3",
-    productId: "akun-fore-coffee",
-    email: "fore3@example.com",
-    password: "pass789",
-    isSold: false,
-  },
-];
+export async function takeInventory(
+  productId: string,
+  quantity: number,
+  orderId: string
+): Promise<InventoryItem[] | null> {
+  const supabase = getSupabaseServerClient();
 
+  const { data: availableItems, error: fetchError } = await supabase
+    .from("inventory")
+    .select(`
+      id,
+      product_id,
+      account_email,
+      account_username,
+      account_password,
+      account_note,
+      status,
+      order_id
+    `)
+    .eq("product_id", productId)
+    .eq("status", "pending")
+    .is("order_id", null)
+    .limit(quantity);
 
-export function takeInventory(productId: string, quantity: number) {
-  const available = inventory.filter(
-    (item) => item.productId === productId && !item.isSold
-  );
-
-  if (available.length < quantity) {
+  if (fetchError) {
+    console.error("TAKE INVENTORY FETCH ERROR:", fetchError);
     return null;
   }
 
-  const selected = available.slice(0, quantity);
-
-  for (const item of selected) {
-    item.isSold = true;
+  if (!availableItems || availableItems.length < quantity) {
+    return null;
   }
 
-  return selected;
+  const inventoryIds = availableItems.map((item) => item.id);
+
+  const { error: updateError } = await supabase
+    .from("inventory")
+    .update({
+      status: "reserved",
+      order_id: orderId,
+      updated_at: new Date().toISOString(),
+    })
+    .in("id", inventoryIds);
+
+  if (updateError) {
+    console.error("TAKE INVENTORY UPDATE ERROR:", updateError);
+    return null;
+  }
+
+  const { data: reservedItems, error: refetchError } = await supabase
+    .from("inventory")
+    .select(`
+      id,
+      product_id,
+      account_email,
+      account_username,
+      account_password,
+      account_note,
+      status,
+      order_id
+    `)
+    .in("id", inventoryIds);
+
+  if (refetchError) {
+    console.error("TAKE INVENTORY REFETCH ERROR:", refetchError);
+    return null;
+  }
+
+  return reservedItems ?? null;
 }
 
-export function releaseInventory(ids: string[]) {
-  for (const item of inventory) {
-    if (ids.includes(item.id)) {
-      item.isSold = false;
-    }
+export async function releaseInventory(
+  inventoryIds: string[],
+  orderId?: string
+) {
+  if (!inventoryIds.length) return [];
+
+  const supabase = getSupabaseServerClient();
+
+  let query = supabase
+    .from("inventory")
+    .update({
+      status: "pending",
+      order_id: null,
+      updated_at: new Date().toISOString(),
+    })
+    .in("id", inventoryIds);
+
+  if (orderId) {
+    query = query.eq("order_id", orderId);
   }
+
+  const { data, error } = await query.select();
+
+  if (error) {
+    console.error("RELEASE INVENTORY ERROR:", error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function markInventoryDelivered(
+  inventoryIds: string[],
+  orderId: string
+) {
+    if (!inventoryIds.length) return [];
+
+    const supabase = getSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("inventory")
+      .update({
+        status: "delivered",
+        order_id: orderId,
+        delivered_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .in("id", inventoryIds)
+      .eq("order_id", orderId)
+      .select();
+
+    if (error) {
+      console.error("MARK INVENTORY DELIVERED ERROR:", error);
+      return null;
+    }
+
+    return data;
 }

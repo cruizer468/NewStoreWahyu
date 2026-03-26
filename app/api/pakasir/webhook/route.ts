@@ -5,7 +5,11 @@ import {
   markOrderDelivered,
 } from "@/lib/orders";
 import { getSupabaseServerClient } from "@/lib/supabase";
-import { takeInventory, releaseInventory } from "@/lib/inventory";
+import {
+  takeInventory,
+  releaseInventory,
+  markInventoryDelivered,
+} from "@/lib/inventory";
 import { sendAccountEmail } from "@/lib/email";
 
 export async function GET() {
@@ -20,7 +24,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { amount, order_id, status } = body;
 
-    console.log("Pakasir webhook masuk:", body);
+    console.log("PAKASIR WEBHOOK BODY:", body);
 
     if (!order_id || !amount) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
@@ -52,56 +56,77 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (status === "completed") {
-      await updateOrderStatus(order.order_id, "paid");
-
-      const supabase = getSupabaseServerClient();
-      const { data: product, error: productError } = await supabase
-        .from("products")
-        .select("id, name")
-        .eq("id", order.product_id)
-        .maybeSingle();
-
-      if (productError || !product) {
-        console.error("WEBHOOK PRODUCT ERROR:", productError);
-        return NextResponse.json(
-          { error: "Produk tidak ditemukan" },
-          { status: 404 }
-        );
-      }
-
-      const qty = order.quantity || 1;
-      const items = takeInventory(order.product_id, qty);
-
-      if (!items) {
-        return NextResponse.json(
-          { error: "Inventory tidak cukup" },
-          { status: 500 }
-        );
-      }
-
-      try {
-        await sendAccountEmail({
-          to: order.buyer_email,
-          buyerName: order.buyer_name,
-          productName: product.name,
-          orderId: order.order_id,
-          accounts: items,
-        });
-
-        await markOrderDelivered(
-          order.order_id,
-          items.map((item) => item.id)
-        );
-      } catch (error) {
-        releaseInventory(items.map((item) => item.id));
-        throw error;
-      }
+    if (status !== "completed") {
+      return NextResponse.json({
+        success: true,
+        message: "Status belum completed, tidak ada aksi.",
+      });
     }
 
-    return NextResponse.json({ success: true });
+    await updateOrderStatus(order.order_id, "paid");
+
+    const supabase = getSupabaseServerClient();
+    const { data: product, error: productError } = await supabase
+      .from("products")
+      .select("id, name")
+      .eq("id", order.product_id)
+      .maybeSingle();
+
+    if (productError || !product) {
+      console.error("WEBHOOK PRODUCT ERROR:", productError);
+      return NextResponse.json(
+        { error: "Produk tidak ditemukan" },
+        { status: 404 }
+      );
+    }
+
+    const qty = Number(order.quantity || 1);
+    const items = await takeInventory(order.product_id, qty, order.order_id);
+
+    if (!items || items.length < qty) {
+      return NextResponse.json(
+        { error: "Inventory tidak cukup" },
+        { status: 500 }
+      );
+    }
+
+    try {
+      const deliveredAccounts = items.map((item) => ({
+        email: item.account_email ?? undefined,
+        username: item.account_username ?? undefined,
+        password: item.account_password ?? undefined,
+        note: item.account_note ?? undefined,
+      }));
+
+      await sendAccountEmail({
+        to: order.buyer_email,
+        buyerName: order.buyer_name,
+        productName: product.name,
+        orderId: order.order_id,
+        accounts: deliveredAccounts,
+      });
+
+      const inventoryIds = items.map((item) => item.id);
+
+      await markInventoryDelivered(inventoryIds, order.order_id);
+      await markOrderDelivered(order.order_id, inventoryIds);
+
+      return NextResponse.json({ success: true });
+    } catch (error) {
+      console.error("EMAIL OR DELIVERY ERROR:", error);
+
+      await releaseInventory(
+        items.map((item) => item.id),
+        order.order_id
+      );
+
+      return NextResponse.json(
+        { error: "Gagal kirim akun / update delivery" },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error("Webhook error:", error);
+    console.error("WEBHOOK ERROR:", error);
     return NextResponse.json({ error: "Webhook gagal" }, { status: 500 });
   }
 }
