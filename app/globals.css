@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fff8d6;
+  --bg-soft: #fff3a3;
+  --card: #ffffff;
+  --text: #171717;
+  --yellow: #ffcb05;
+  --yellow-dark: #f4b400;
+  --red: #ef4444;
+  --black: #111111;
+  --line: #1f1f1f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(255, 203, 5, 0.18), transparent 25%),
+    radial-gradient(circle at bottom right, rgba(239, 68, 68, 0.08), transparent 20%),
+    var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.pika-container {
+  @apply mx-auto max-w-7xl px-4;
+}
+
+.pika-section-title {
+  @apply text-3xl font-black tracking-tight text-neutral-900 md:text-4xl;
+}
+
+.pika-section-desc {
+  @apply mt-2 text-sm leading-6 text-neutral-700;
+}
+
+.pika-card {
+  @apply rounded-[24px] border-2 border-black bg-white shadow-[5px_5px_0px_#111];
+}
+
+.pika-button-primary {
+  @apply inline-flex items-center justify-center rounded-2xl border-2 border-black bg-yellow-400 px-5 py-3 text-sm font-bold text-black transition hover:-translate-y-0.5 hover:bg-yellow-300;
+}
+
+.pika-button-secondary {
+  @apply inline-flex items-center justify-center rounded-2xl border-2 border-black bg-white px-5 py-3 text-sm font-bold text-black transition hover:-translate-y-0.5 hover:bg-neutral-100;
+}
+
+.pika-badge {
+  @apply inline-flex rounded-full border-2 border-black bg-red-500 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white;
+}
+
+.pika-badge-yellow {
+  @apply inline-flex rounded-full border-2 border-black bg-yellow-400 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-black;
+}
+
+.pika-tab {
+  @apply rounded-2xl border-2 border-black bg-white px-4 py-2 text-sm font-bold text-black transition hover:bg-yellow-100;
+}
+
+.pika-tab-active {
+  @apply bg-yellow-400 text-black;
+}
+
+.pika-input {
+  @apply w-full rounded-2xl border-2 border-black bg-white px-4 py-3 outline-none transition focus:bg-yellow-50;
+}
+
+.pika-grid-bg {
+  background-image:
+    linear-gradient(rgba(17, 17, 17, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 17, 17, 0.03) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.pika-lightning {
+  position: relative;
+}
+
+.pika-lightning::after {
+  content: "⚡";
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  font-size: 18px;
+  transform: rotate(8deg);
+}
