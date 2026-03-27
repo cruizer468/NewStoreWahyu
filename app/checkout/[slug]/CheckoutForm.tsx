@@ -223,7 +223,7 @@ export default function CheckoutForm({ product }: { product: Product }) {
         </div>
       </section>
 
-      <section className="border-t-2 border-black pt-4">
+    {/*  <section className="border-t-2 border-black pt-4">
         <div className="mb-3 flex items-center gap-2">
           <span className="text-xs">🛡️</span>
           <h3 className="text-sm font-black uppercase text-black">
@@ -241,7 +241,7 @@ export default function CheckoutForm({ product }: { product: Product }) {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="border-t-2 border-black pt-4">
         <div className="mb-3 flex items-center gap-2">
