@@ -135,10 +135,10 @@ export async function sendAccountEmail(params: {
                           <div style="font-size:30px; line-height:1;">⚡</div>
                         </td>
                         <td valign="middle" style="padding-left:10px; font-family: Arial, Helvetica, sans-serif; color:#ffffff; font-size:18px; font-weight:800; letter-spacing:0.5px;">
-                          HOLLY STORE
+                          Wayyy Store
                         </td>
                         <td align="right" valign="middle">
-                          <div style="font-size:54px; line-height:1;">⚡🐹⚡</div>
+                          <div style="font-size:54px; line-height:1;">🐹</div>
                         </td>
                       </tr>
                     </table>
@@ -231,7 +231,7 @@ export async function sendAccountEmail(params: {
                 <tr>
                   <td style="padding:0 24px 28px 24px; font-family: Arial, Helvetica, sans-serif; color:#111111;">
                     <div style="font-size:14px; line-height:1.8;">
-                      Terima kasih sudah belanja di <b>HOLLY STORE</b> 💛
+                      Terima kasih sudah belanja di <b>Wayyy STORE</b> 💛
                     </div>
                   </td>
                 </tr>
@@ -251,7 +251,7 @@ export async function sendAccountEmail(params: {
           <tr>
             <td style="padding:18px 16px 10px 16px; text-align:center; font-family: Arial, Helvetica, sans-serif; color:#555555; font-size:11px; line-height:1.8;">
               ⚠ Email ini dikirim secara otomatis, mohon tidak membalas email ini.<br/>
-              © 2026 <span style="background:#ffd400; color:#111111; padding:2px 6px; font-weight:700;">HOLLY STORE</span> - All Rights Reserved.
+              © 2026 <span style="background:#ffd400; color:#111111; padding:2px 6px; font-weight:700;">Wayyy STORE</span> - All Rights Reserved.
             </td>
           </tr>
 
