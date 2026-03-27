@@ -32,12 +32,12 @@ export default function ProcessSteps() {
           </div>
 
           <h2 className="mt-4 text-3xl font-black text-black sm:text-4xl">
-            Proses Instan &amp; Otomatis
+           Klik, Zap, Done! ⚡
           </h2>
 
           <div className="mt-3 h-2 w-24 rounded-full border-2 border-black bg-[#ff4d4d]" />
           <p className="mt-4 max-w-2xl text-sm leading-6 text-black/75 sm:text-base">
-            Proses pembelian super cepat dengan nuansa ceria ala Pikachu ⚡
+            Belanja cepat dengan sentuhan energi Pikachu ⚡
           </p>
         </div>
 
