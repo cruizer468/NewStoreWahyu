@@ -20,7 +20,7 @@ export default function TelegramCta() {
         </ul>
 
         <Link
-          href="https://t.me/"
+          href="https://t.me/+9vbgpThnEVY2Mzk1"
           target="_blank"
           className="mt-6 inline-block rounded-md border-4 border-[#ffd400] bg-[#ffd400] px-5 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000]"
         >
