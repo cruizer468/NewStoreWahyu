@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getOrderById } from "@/lib/orders";
 import PaymentClient from "./payment-client";
+import Link from "next/link";
 
 export default async function PaymentPage({
   params,
@@ -72,6 +73,14 @@ export default async function PaymentPage({
               <span className="font-black">Total</span>
               <span>Rp {Number(order.gross_amount).toLocaleString("id-ID")}</span>
             </div>
+            <div className="mt-6">
+             <Link
+              href="/"
+              className="block w-full border-4 border-black bg-[#caffbf] px-4 py-3 text-center text-sm font-black uppercase shadow-[4px_4px_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition"
+             >
+    ⬅️ Kembali ke Beranda
+  </Link>
+</div>
           </div>
         </div>
       </section>
