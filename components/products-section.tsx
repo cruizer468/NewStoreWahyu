@@ -13,7 +13,7 @@ export default function ProductsSection({ products }: { products: Product[] }) {
           </div>
           <h2 className="mt-3 text-3xl font-black text-black">Katalog Produk</h2>
           <p className="mt-2 text-sm text-black/70">
-            Semua produk tampil langsung dari Supabase.
+            Semua produk di cek berkala untuk menjamin kualitas.
           </p>
         </div>
 
