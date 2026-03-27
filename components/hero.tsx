@@ -16,7 +16,7 @@ export default function Hero() {
           </h1>
 
           <p className="mt-4 max-w-lg text-sm leading-6 text-black/80 sm:text-base">
-            Solusi kebutuhan digital premium mulai dari akun CMR/TL, akun hiburan,
+            Solusi kebutuhan digital premium mulai dari Akun digital & voucher premium
             hingga lisensi software dengan harga hemat dan proses instan.
           </p>
 
