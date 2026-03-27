@@ -237,7 +237,7 @@ export default function CheckoutForm({ product }: { product: Product }) {
               ✓ Human
             </div>
             <div className="text-[9px] font-black uppercase text-white">
-              Pikachu Security Check
+              Security Check
             </div>
           </div>
         </div>
@@ -270,12 +270,12 @@ export default function CheckoutForm({ product }: { product: Product }) {
 
             <div className="flex items-center justify-between border-b border-black pb-2">
               <span>Tipe Produk</span>
-              <span>Electric Account</span>
+              <span>Account</span>
             </div>
 
             <div className="flex items-center justify-between border-b border-black pb-2">
               <span>Metode bayar</span>
-              <span>Pakasir</span>
+              <span>QRIS</span>
             </div>
 
             <div className="flex items-center justify-between pb-1">
