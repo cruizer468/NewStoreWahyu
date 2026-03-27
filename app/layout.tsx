@@ -2,8 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Digital Store",
-  description: "Template toko digital dengan Next.js",
+  title: "Wayyy Store",
+  description: "Premium Digital Store like a pikachu",
 };
 
 export default function RootLayout({
