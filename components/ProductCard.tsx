@@ -5,7 +5,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const soldOut = product.stock <= 0;
 
   return (
-    <div className="relative rounded-2xl border-2 border-black/70 bg-[#E9E2C7] p-4 shadow-[6px_6px_0_rgba(0,0,0,0.8)]">
+    <div className="relative rounded-2xl border-2 border-black/70 bg-[#fff7cc] p-4 shadow-[6px_6px_0_rgba(0,0,0,0.8)]">
 
       {/* Badge top */}
       <div className="flex items-center justify-between">

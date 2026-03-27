@@ -14,7 +14,7 @@ export default async function HomePage() {
   console.log("HOME PRODUCTS:", products);
 
   return (
-    <main className="min-h-screen bg-[#e7e0c5]">
+    <main className="min-h-screen bg-[#E9E2C7]">
       <Hero />
       <ProcessSteps />
       <ProductsSection products={products} />

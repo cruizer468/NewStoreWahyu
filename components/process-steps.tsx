@@ -24,7 +24,7 @@ const steps = [
 
 export default function ProcessSteps() {
   return (
-    <section className="border-b-4 border-black bg-[#fff7cc]">
+    <section className="bg-[#fff7cc]">
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="mb-10">
           <div className="inline-block rounded-full border-2 border-black bg-white px-3 py-1 text-[10px] font-black uppercase tracking-wider">

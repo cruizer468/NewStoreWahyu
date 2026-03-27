@@ -15,7 +15,7 @@ const items = [
 
 export default function TrustSection() {
   return (
-    <section className="bg-[#efe48c]">
+    <section className="bg-[#fff7cc]">
       <div className="mx-auto grid max-w-6xl gap-4 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-8">
         {items.map((item) => (
           <div
