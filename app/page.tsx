@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
+
 import Hero from "@/components/hero";
 import ProcessSteps from "@/components/process-steps";
 import ProductsSection from "@/components/products-section";
